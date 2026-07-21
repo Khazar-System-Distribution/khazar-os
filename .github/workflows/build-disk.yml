@@ -47,6 +47,8 @@ jobs:
       id-token: write
 
     steps:
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Prepare environment
         run: |
           USER_UID=$(id -u)
