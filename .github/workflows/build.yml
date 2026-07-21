@@ -5,19 +5,21 @@ on:
     branches:
       - main
   schedule:
-    - cron: '05 10 * * *'  # 10:05am UTC everyday
+    - cron: '05 10 * * *'
   push:
     branches:
       - main
     paths-ignore:
       - '**/README.md'
+    tags:
+      - 'v*'
   workflow_dispatch:
 
 env:
-  IMAGE_REGISTRY: "ghcr.io/${{ github.repository_owner }}"  # do not edit
+  IMAGE_REGISTRY: "ghcr.io/${{ github.repository_owner }}"
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.brand_name}}-${{ inputs.stream_name }}
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
   cancel-in-progress: true
 
 jobs:
@@ -31,15 +33,14 @@ jobs:
       id-token: write
 
     steps:
-      # These stage versions are pinned by https://github.com/renovatebot/renovate
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        uses: actions/checkout@v4
 
       - name: Maximize build space
-        uses: ublue-os/remove-unwanted-software@695eb75bc387dbcd9685a8e72d23439d8686cba6
+        uses: ublue-os/remove-unwanted-software@v7
 
       - name: Install just
-        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 #v4.0.0
+        uses: extractions/setup-just@v2
 
       - name: Check Just Syntax
         shell: bash
@@ -50,23 +51,19 @@ jobs:
         id: image-name
         run: |
           IMAGE_NAME=$(just image_name)
-
           echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
 
       - name: Default Tag
         id: gen-default-tag
         run: |
           DEFAULT_TAG=$(just generate-default-tag)
-
           echo "DEFAULT_TAG=${DEFAULT_TAG}" >> $GITHUB_ENV
 
       - name: Prepare environment
         run: |
-          # Lowercase the image uri https://github.com/macbre/push-to-ghcr/issues/12
           echo "IMAGE_REGISTRY=${IMAGE_REGISTRY,,}" >> ${GITHUB_ENV}
           echo "IMAGE_NAME=${IMAGE_NAME,,}" >> ${GITHUB_ENV}
 
-      # This actually builds the container image
       - name: Build Image
         id: build-image
         run: |
@@ -74,7 +71,6 @@ jobs:
             ${IMAGE_NAME} \
             ${DEFAULT_TAG}
 
-      # This is optional, this provides smaller delta updates
       - name: Rechunk with rpm-ostree
         id: rechunk
         run: |
@@ -82,23 +78,12 @@ jobs:
             ${IMAGE_NAME} \
             ${DEFAULT_TAG}
 
-      # If you are feeling adventurous, use the new distro agnostic rechunker
-      # https://github.com/coreos/chunkah
-      # You can delete the Rechunk with rpm-ostree portion then if you use this
-      #- name: Rechunk with Chunkah
-      #  id: rechunk
-      #  run: |
-      #    sudo -E $(command -v just) rechunk \
-      #      ${IMAGE_NAME} \
-      #      ${DEFAULT_TAG}
-
       - name: Generate Build Tags
         id: gen-build-tags
         run: |
           alias_tags="$(just generate-build-tags \
                         ${IMAGE_NAME} \
                         ${DEFAULT_TAG})"
-
           echo "Tags for this Action..."
           echo "${alias_tags}"
           echo "alias_tags=${alias_tags}" >> $GITHUB_OUTPUT
@@ -113,10 +98,8 @@ jobs:
             "${DEFAULT_TAG}" \
             "${ALIAS_TAGS}"
 
-      # These `if` statements are so that pull requests for your custom images do not make it publish any packages under your name without you knowing
-      # They also check if the runner is on the default branch so that things like the merge queue (if you enable it), are going to work
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
+        uses: docker/login-action@v3
         if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
         with:
           registry: ghcr.io
@@ -133,19 +116,12 @@ jobs:
           for tag in ${ALIAS_TAGS}; do
             sudo -E podman push --digestfile=/tmp/digestfile ${IMAGE_NAME}:${tag} ${IMAGE_REGISTRY}/${IMAGE_NAME}:${tag}
           done
-
           digest=$(< /tmp/digestfile)
-
           echo "digest=${digest}" >> $GITHUB_OUTPUT
 
-      # This section is optional and only needs to be enabled if you plan on distributing
-      # your project for others to consume. You will need to create a public and private key
-      # using Cosign and save the private key as a repository secret in Github for this workflow
-      # to consume. For more details, review the image signing section of the README.
       - name: Install Cosign
-        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+        uses: sigstore/cosign-installer@v3
         if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
-        # https://github.com/containers/container-libs/issues/388
         with:
           cosign-release: 'v2.6.3'
 
@@ -159,3 +135,69 @@ jobs:
         run: |
           cosign sign -y --key env://COSIGN_PRIVATE_KEY ${IMAGE_REGISTRY}/${IMAGE_NAME}@${DIGEST}
 
+  # ── ISO Build (only on v* tag push or workflow_dispatch) ──
+  build-iso:
+    name: Build ISO image
+    runs-on: ubuntu-24.04
+    needs: build_push
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: write
+      packages: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Image Name
+        id: image-name
+        run: |
+          IMAGE_NAME=$(just image_name)
+          echo "IMAGE_NAME=${IMAGE_NAME,,}" >> $GITHUB_ENV
+
+      - name: Pull image from GHCR
+        run: |
+          echo "IMAGE_REGISTRY=${IMAGE_REGISTRY,,}" >> $GITHUB_ENV
+          sudo podman pull ${IMAGE_REGISTRY}/${IMAGE_NAME}:latest
+          sudo podman tag ${IMAGE_REGISTRY}/${IMAGE_NAME}:latest ${IMAGE_NAME}:latest
+
+      - name: Build ISO with bootc-image-builder
+        run: |
+          sudo podman run \
+            --rm \
+            --privileged \
+            --pull=newer \
+            --security-opt label=type:unconfined_t \
+            -v $(pwd)/output:/output \
+            -v /var/lib/containers/storage:/var/lib/containers/storage \
+            quay.io/centos-bootc/bootc-image-builder:latest \
+            --type iso \
+            --rootfs btrfs \
+            --use-librepo=True \
+            ${IMAGE_NAME}:latest
+
+          sudo chown -R $USER:$USER output/
+
+      - name: Create ISO Release
+        uses: softprops/action-gh-release@c062c08b53281593f1c4f1b8f0030aab5a5a7a96 # v2
+        with:
+          name: KhazarOS ${{ github.ref_name }}
+          body: |
+            ## KhazarOS ${{ github.ref_name }}
+
+            AI-powered Linux Desktop. Fedora Silverblue + Local AI + GNOME.
+
+            ### Quick Install
+            ```bash
+            # From existing bootc system:
+            sudo bootc switch ghcr.io/${{ github.repository_owner }}/khazar-system:latest
+            sudo reboot
+            ```
+            ### ISO Install
+            ```bash
+            sudo dd if=khazaros-*.iso of=/dev/sdX bs=4M status=progress
+            ```
+          files: |
+            output/bootiso/install.iso
+          draft: false
+          prerelease: false
