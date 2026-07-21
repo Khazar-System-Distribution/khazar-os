@@ -183,8 +183,16 @@ jobs:
 
           sudo chown -R $USER:$USER output/
 
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: khazaros-iso
+          path: output/
+          retention-days: 7
+
       - name: Create ISO Release
-        uses: softprops/action-gh-release@c062c08b53281593f1c4f1b8f0030aab5a5a7a96 # v2
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/v')
         with:
           name: KhazarOS ${{ github.ref_name }}
           body: |
