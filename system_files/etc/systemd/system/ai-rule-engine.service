@@ -1,0 +1,16 @@
+[Unit]
+Description=Khazar AI Rule Engine (Tier 0)
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/ai-rule-engine /etc/khazar/rule-engine.toml
+Restart=always
+RestartSec=5
+RuntimeDirectory=khazar
+RuntimeDirectoryMode=0750
+User=khazar
+Group=khazar
+
+[Install]
+WantedBy=multi-user.target

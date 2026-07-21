@@ -1,0 +1,16 @@
+[Unit]
+Description=Khazar AI Policy Engine
+After=network.target ai-rule-engine.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/ai-policy-engine /etc/khazar/policy-engine.toml
+Restart=always
+RestartSec=5
+RuntimeDirectory=khazar
+RuntimeDirectoryMode=0750
+User=khazar
+Group=khazar
+
+[Install]
+WantedBy=multi-user.target

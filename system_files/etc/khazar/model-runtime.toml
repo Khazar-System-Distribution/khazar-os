@@ -1,0 +1,11 @@
+# ── model-runtime.toml ───────────────────────────────
+socket_path="/run/khazar/model-runtime.sock"
+max_connections=16
+model_path="/var/lib/khazar/models/default.gguf"
+context_size=2048
+default_max_tokens=256
+default_temperature=0.7
+num_threads=4
+log_level=3
+backend="llamacpp"
+daemonize=false

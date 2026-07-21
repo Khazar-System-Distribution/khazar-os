@@ -1,0 +1,16 @@
+[Unit]
+Description=Khazar AI Intent Classifier (Tier 1)
+After=network.target ai-model-runtime.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/ai-intent-classifier /etc/khazar/intent-classifier.toml
+Restart=always
+RestartSec=5
+RuntimeDirectory=khazar
+RuntimeDirectoryMode=0750
+User=khazar
+Group=khazar
+
+[Install]
+WantedBy=multi-user.target

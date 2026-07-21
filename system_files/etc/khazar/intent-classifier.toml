@@ -1,0 +1,7 @@
+# ── intent-classifier.toml ────────────────────────────
+socket_path="/run/khazar/intent-classifier.sock"
+max_connections=64
+model_runtime_socket="/run/khazar/model-runtime.sock"
+log_level=3
+daemonize=false
+fallback_to_local=true

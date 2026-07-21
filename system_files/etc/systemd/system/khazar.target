@@ -1,0 +1,8 @@
+[Unit]
+Description=Khazar AI Platform
+Wants=ai-rule-engine.service ai-policy-engine.service ai-orchestrator.service
+Wants=ai-model-runtime.service ai-intent-classifier.service
+Wants=ai-desktop-agent.service ai-package-agent.service ai-network-agent.service ai-power-agent.service ai-audio-agent.service
+
+[Install]
+WantedBy=multi-user.target

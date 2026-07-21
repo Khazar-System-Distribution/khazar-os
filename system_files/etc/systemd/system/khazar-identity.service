@@ -1,0 +1,14 @@
+[Unit]
+Description=KhazarOS System Identity
+Before=systemd-user-sessions.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/cp -f /usr/share/khazar/configs/os-release /etc/os-release
+ExecStart=/usr/bin/cp -f /usr/share/khazar/configs/issue /etc/issue
+ExecStart=/usr/bin/ln -sf khazar-release /etc/system-release
+ExecStart=/usr/bin/ln -sf khazar-release /etc/redhat-release
+
+[Install]
+WantedBy=multi-user.target

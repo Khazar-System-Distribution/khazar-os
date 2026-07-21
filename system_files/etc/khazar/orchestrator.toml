@@ -1,0 +1,12 @@
+# KhazarOS — daemon config files
+# Bunlar /etc/khazar/ altına quraşdırılacaq
+
+# ── orchestrator.toml ─────────────────────────────────
+socket_path="/run/khazar/orchestrator.sock"
+max_connections=256
+request_timeout_ms=3000
+enable_metrics=true
+rule_engine_socket="/run/khazar/rule-engine.sock"
+policy_engine_socket="/run/khazar/policy-engine.sock"
+classifier_socket="/run/khazar/intent-classifier.sock"
+log_level=2

@@ -1,0 +1,11 @@
+# ── rule-engine.toml ─────────────────────────────────
+socket_path="/run/khazar/rule-engine.sock"
+max_connections=64
+enable_cache=true
+enable_regex=true
+enable_tokens=true
+enable_intent_table=true
+enable_alias=true
+enable_fuzzy=true
+daemonize=false
+log_level=3
