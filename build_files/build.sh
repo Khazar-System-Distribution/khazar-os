@@ -1,27 +1,67 @@
 #!/bin/bash
-
 set -ouex pipefail
 
-# Copy the contents of system_files/ of the git repo to /
+# ── Copy system overlay files ──────────────────────
 cp -avf "/ctx/system_files"/. /
 
-### Install packages
+# ── Create Khazar user ─────────────────────────────
+groupadd -r khazar 2>/dev/null || true
+useradd -r -s /sbin/nologin -d /var/lib/khazar -g khazar khazar 2>/dev/null || true
+mkdir -p /var/lib/khazar/{bin,models} /run/khazar /etc/khazar/policies
+chown -R khazar:khazar /var/lib/khazar /run/khazar /etc/khazar
 
-# Packages can be installed from any enabled yum repo on the image.
-# RPMfusion repos are available by default in ublue main images
-# List of rpmfusion packages can be found here:
-# https://mirrors.rpmfusion.org/mirrorlist?path=free/fedora/updates/43/x86_64/repoview/index.html&protocol=https&redirect=1
+# ── Install runtime dependencies ───────────────────
+dnf5 install -y \
+    pulseaudio-utils \
+    NetworkManager-wifi \
+    papirus-icon-theme \
+    jetbrains-mono-fonts \
+    dejavu-sans-fonts \
+    python3 \
+    zenity \
+    2>/dev/null || dnf install -y \
+    pulseaudio-utils \
+    NetworkManager-wifi \
+    papirus-icon-theme \
+    jetbrains-mono-fonts \
+    dejavu-sans-fonts \
+    python3 \
+    zenity
 
-# this installs a package from fedora repos
-dnf5 install -y tmux
+# ── Set permissions on Khazar binaries ─────────────
+chmod +x /usr/local/bin/ai-* 2>/dev/null || true
+chmod +x /usr/local/bin/kha 2>/dev/null || true
+[ -f /usr/local/bin/kha ] && ln -sf /usr/local/bin/kha /usr/bin/kha
 
-# Use a COPR Example:
-#
-# dnf5 -y copr enable ublue-os/staging
-# dnf5 -y install package
-# Disable COPRs so they don't end up enabled on the final image:
-# dnf5 -y copr disable ublue-os/staging
+# ── Enable Khazar services ─────────────────────────
+systemctl enable ai-rule-engine.service 2>/dev/null || true
+systemctl enable ai-policy-engine.service 2>/dev/null || true
+systemctl enable ai-orchestrator.service 2>/dev/null || true
+systemctl enable ai-desktop-agent.service 2>/dev/null || true
+systemctl enable ai-package-agent.service 2>/dev/null || true
+systemctl enable ai-network-agent.service 2>/dev/null || true
+systemctl enable ai-power-agent.service 2>/dev/null || true
+systemctl enable ai-audio-agent.service 2>/dev/null || true
+systemctl enable khazar.target 2>/dev/null || true
 
-#### Example for enabling a System Unit File
+# ── OS Identity ────────────────────────────────────
+cat > /usr/lib/os-release << 'KHIDENTITY'
+NAME="KhazarOS"
+VERSION="0.1.0 (Xezer)"
+ID="khazaros"
+ID_LIKE="fedora"
+VERSION_ID="0.1.0"
+PRETTY_NAME="KhazarOS 0.1.0"
+ANSI_COLOR="0;31"
+HOME_URL="https://github.com/Khazar-System-Distribution/khazar-os"
+KHIDENTITY
+echo "KhazarOS 0.1.0" > /etc/issue 2>/dev/null || true
 
-systemctl enable podman.socket
+# ── GNOME defaults ─────────────────────────────────
+cat > /usr/share/glib-2.0/schemas/00-khazar.gschema.override << 'KHGSETTINGS'
+[org.gnome.desktop.interface]
+gtk-theme='Adwaita-dark'
+color-scheme='prefer-dark'
+font-name='DejaVu Sans 10'
+KHGSETTINGS
+glib-compile-schemas /usr/share/glib-2.0/schemas/ 2>/dev/null || true

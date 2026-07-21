@@ -1,0 +1,16 @@
+[Unit]
+Description=Khazar AI Orchestrator
+After=network.target ai-rule-engine.service ai-policy-engine.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/ai-orchestrator /etc/khazar/orchestrator.toml
+Restart=always
+RestartSec=5
+RuntimeDirectory=khazar
+RuntimeDirectoryMode=0750
+User=khazar
+Group=khazar
+
+[Install]
+WantedBy=multi-user.target
