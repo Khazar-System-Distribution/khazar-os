@@ -15,6 +15,8 @@ dnf5 install -y gcc make socat
 # ---------- faz 3: Khazar platform build (lokal mənbədən) ----------
 cp -r /ctx/khazar /tmp/khazar-src
 make -C /tmp/khazar-src all
+# ostree systems have /usr/local -> ../var/usrlocal symlink
+install -d /var/usrlocal/bin /var/usrlocal/lib /var/usrlocal/include 2>/dev/null || mkdir -p /usr/local/bin /usr/local/lib /usr/local/include
 make -C /tmp/khazar-src install DESTDIR=/
 install -m 755 /tmp/khazar-src/distro/cli/kha /usr/local/bin/kha
 
