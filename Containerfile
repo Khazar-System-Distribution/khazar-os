@@ -10,8 +10,8 @@ FROM ghcr.io/ublue-os/bluefin:stable
 ### MODIFICATIONS
 # build.sh handles: Khazar platform build + Ollama install + system overlay + systemd enable
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
-    --mount=type=cache,dst=/var/cache \
-    --mount=type=cache,dst=/var/log \
+    --mount=type=tmpfs,dst=/var/cache \
+    --mount=type=tmpfs,dst=/var/log \
     --mount=type=tmpfs,dst=/tmp \
     /ctx/build.sh
 
