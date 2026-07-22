@@ -4,7 +4,3 @@ hostname = "khazaros"
 [customizations.kernel]
 append = "quiet rhgb"
 
-[[customizations.users]]
-name = "khazar"
-key = ""
-groups = ["wheel", "khazar"]
