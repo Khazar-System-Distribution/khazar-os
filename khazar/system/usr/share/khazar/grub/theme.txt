@@ -1,0 +1,43 @@
+# GRUB Theme for KhazarOS
+title-text: "KhazarOS"
+title-font: "DejaVu Sans Bold 16"
+title-color: "#e94560"
+desktop-color: "#1a1a2e"
+desktop-image: "background.png"
+
++ boot_menu {
+    left = 20%
+    top = 25%
+    width = 60%
+    height = 50%
+    item_color = "#c0c0c0"
+    selected_item_color = "#e94560"
+    item_height = 28
+    item_padding = 6
+    item_spacing = 4
+    item_font = "DejaVu Sans 11"
+    scrollbar = true
+    scrollbar_width = 8
+}
+
++ progress_bar {
+    id = "__timeout__"
+    left = 35%
+    top = 80%
+    width = 30%
+    height = 6
+    fg_color = "#e94560"
+    bg_color = "#0f3460"
+    border_color = "#0f3460"
+    show_text = false
+}
+
++ label {
+    top = 92%
+    left = 0
+    width = 100%
+    align = "center"
+    text = "AI Desktop Operating System"
+    font = "DejaVu Sans 10"
+    color = "#666688"
+}

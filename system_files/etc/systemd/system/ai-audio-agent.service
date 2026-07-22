@@ -1,0 +1,17 @@
+[Unit]
+Description=Khazar Audio Agent
+After=ai-orchestrator.service
+PartOf=khazar.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/ai-audio-agent
+Restart=always
+RestartSec=5
+RuntimeDirectory=khazar
+RuntimeDirectoryMode=0750
+User=khazar
+Group=khazar
+
+[Install]
+WantedBy=khazar.target

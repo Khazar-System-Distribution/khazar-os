@@ -1,0 +1,98 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://devuan.kg/khazar/ai-protocol/capability-schema.json",
+    "title": "Capability Registry Schema",
+    "description": "Agent qeydiyyatı və capability modeli üçün JSON Schema.",
+    "type": "object",
+    "properties": {
+        "type": {
+            "type": "string",
+            "const": "register"
+        },
+        "name": {
+            "type": "string",
+            "maxLength": 64,
+            "description": "Agent adı (unik olmalıdır)"
+        },
+        "version": {
+            "type": "string",
+            "maxLength": 16,
+            "pattern": "^\\d+\\.\\d+\\.\\d+$",
+            "description": "Semantic version"
+        },
+        "capabilities": {
+            "type": "array",
+            "maxItems": 32,
+            "items": {
+                "type": "string",
+                "maxLength": 64
+            },
+            "description": "Agent-in dəstəklədiyi bacarıqlar"
+        }
+    },
+    "required": ["type", "name", "version", "capabilities"],
+
+    "x-capabilityRegistry": {
+        "maxAgents": 64,
+        "maxCapabilitiesPerAgent": 32,
+        "heartbeatIntervalSec": 5,
+        "heartbeatTimeoutSec": 15,
+        "agentStates": [
+            "UNREGISTERED",
+            "REGISTERING",
+            "REGISTERED",
+            "RUNNING",
+            "ERROR",
+            "SHUTDOWN"
+        ]
+    },
+
+    "x-intentToCapabilityMapping": {
+        "open_application": ["open_application"],
+        "close_application": ["open_application"],
+        "window_minimize": ["open_application"],
+        "window_maximize": ["open_application"],
+        "install_package": ["install_package"],
+        "remove_package": ["install_package"],
+        "search_package": ["install_package"],
+        "system_update": ["install_package"],
+        "system_shutdown": ["system_management"],
+        "system_reboot": ["system_management"],
+        "system_suspend": ["system_management"],
+        "system_lock": ["system_management"],
+        "system_hibernate": ["system_management"],
+        "system_logout": ["system_management"],
+        "process_kill": ["system_management"],
+        "network_enable": ["network_management"],
+        "network_disable": ["network_management"],
+        "network_status": ["network_management"],
+        "volume_up": ["audio_control"],
+        "volume_down": ["audio_control"],
+        "volume_mute": ["audio_control"],
+        "volume_set": ["audio_control"],
+        "brightness_up": ["display_control"],
+        "brightness_down": ["display_control"],
+        "brightness_set": ["display_control"],
+        "screenshot": ["screenshot"],
+        "clipboard_copy": ["screenshot"],
+        "file_open": ["file_management"],
+        "file_search": ["file_management"],
+        "notification_send": ["notification"]
+    },
+
+    "x-capabilityRegistrationExample": {
+        "type": "register",
+        "name": "desktop-agent",
+        "version": "0.1.0",
+        "capabilities": [
+            "open_application",
+            "close_application"
+        ]
+    },
+
+    "x-heartbeatExample": {
+        "type": "heartbeat",
+        "name": "desktop-agent",
+        "timestamp": 1718234567
+    }
+}

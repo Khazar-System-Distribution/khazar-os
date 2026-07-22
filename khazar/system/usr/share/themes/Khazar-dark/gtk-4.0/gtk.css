@@ -1,0 +1,304 @@
+/* KhazarOS GTK4 Theme */
+/* ==================== */
+
+@define-color accent_color #e94560;
+@define-color accent_bg_color #0f3460;
+@define-color accent_fg_color white;
+@define-color destructive_color #cf2233;
+@define-color destructive_bg_color #331111;
+@define-color destructive_fg_color white;
+@define-color success_color #22cf60;
+@define-color success_bg_color #113311;
+@define-color warning_color #cf8f22;
+@define-color warning_bg_color #332211;
+@define-color error_color #cf2233;
+@define-color error_bg_color #331111;
+
+@define-color window_bg_color #1a1a2e;
+@define-color window_fg_color #e0e0e0;
+@define-color view_bg_color #1a1a2e;
+@define-color view_fg_color #e0e0e0;
+
+@define-color headerbar_bg_color #16213e;
+@define-color headerbar_fg_color #e0e0e0;
+@define-color headerbar_border_color rgba(233, 69, 96, 0.15);
+@define-color headerbar_backdrop_color #12182b;
+
+@define-color sidebar_bg_color #141e33;
+@define-color sidebar_fg_color #c0c0d0;
+@define-color sidebar_backdrop_color #10192b;
+
+@define-color card_bg_color #0f3460;
+@define-color card_fg_color #e0e0e0;
+@define-color card_shade_color rgba(0, 0, 0, 0.2);
+
+@define-color popover_bg_color #16213e;
+@define-color popover_fg_color #e0e0e0;
+
+@define-color shade_color rgba(0, 0, 0, 0.3);
+@define-color scrollbar_outline_color rgba(233, 69, 96, 0.2);
+
+/* === GLOBAL === */
+* {
+    -gtk-secondary-caret-color: #e94560;
+}
+
+window {
+    background-color: @window_bg_color;
+    color: @window_fg_color;
+}
+
+/* === HEADER BAR === */
+headerbar {
+    background-color: @headerbar_bg_color;
+    color: @headerbar_fg_color;
+    border-bottom: 1px solid @headerbar_border_color;
+    padding: 4px 8px;
+    min-height: 42px;
+}
+
+headerbar:backdrop {
+    background-color: @headerbar_backdrop_color;
+    color: #8888aa;
+}
+
+/* === BUTTONS === */
+button {
+    background: @card_bg_color;
+    color: @window_fg_color;
+    border: 1px solid rgba(233, 69, 96, 0.15);
+    border-radius: 8px;
+    padding: 6px 16px;
+    font-weight: normal;
+    transition: all 0.15s ease;
+}
+
+button:hover {
+    background: rgba(233, 69, 96, 0.15);
+    border-color: rgba(233, 69, 96, 0.3);
+}
+
+button:active {
+    background: rgba(233, 69, 96, 0.25);
+}
+
+button.suggested-action {
+    background: @accent_color;
+    color: white;
+    border: none;
+    font-weight: bold;
+}
+
+button.suggested-action:hover {
+    background: #c73550;
+}
+
+button.destructive-action {
+    background: @destructive_color;
+    color: white;
+}
+
+/* === ENTRIES === */
+entry {
+    background: rgba(255, 255, 255, 0.06);
+    color: @window_fg_color;
+    border: 1px solid rgba(233, 69, 96, 0.15);
+    border-radius: 8px;
+    padding: 8px 12px;
+    caret-color: @accent_color;
+}
+
+entry:focus {
+    border-color: @accent_color;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* === SIDEBAR / LIST === */
+listview,
+list {
+    background-color: @window_bg_color;
+    color: @window_fg_color;
+}
+
+row {
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(233, 69, 96, 0.05);
+}
+
+row:hover {
+    background: rgba(233, 69, 96, 0.1);
+}
+
+row:selected {
+    background: @accent_bg_color;
+    color: white;
+}
+
+/* === SCROLLBAR === */
+scrollbar slider {
+    background: rgba(233, 69, 96, 0.3);
+    border-radius: 4px;
+    min-width: 6px;
+}
+
+scrollbar slider:hover {
+    background: rgba(233, 69, 96, 0.5);
+}
+
+/* === SWITCH === */
+switch {
+    background: rgba(15, 52, 96, 0.5);
+    border-radius: 13px;
+    min-width: 48px;
+}
+
+switch:checked {
+    background: @accent_color;
+}
+
+switch slider {
+    background: white;
+    border-radius: 12px;
+    min-width: 22px;
+    min-height: 22px;
+}
+
+/* === CHECK / RADIO === */
+checkbutton check:checked,
+radiobutton radio:checked {
+    background: @accent_color;
+    border-color: @accent_color;
+    color: white;
+}
+
+/* === PROGRESS BAR === */
+progressbar trough {
+    background: rgba(15, 52, 96, 0.3);
+    border-radius: 4px;
+    min-height: 6px;
+}
+
+progressbar progress {
+    background: @accent_color;
+    border-radius: 4px;
+}
+
+/* === TOOLTIP === */
+tooltip {
+    background: @card_bg_color;
+    border: 1px solid rgba(233, 69, 96, 0.2);
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: @window_fg_color;
+}
+
+/* === MENU === */
+menu {
+    background: @popover_bg_color;
+    border: 1px solid rgba(233, 69, 96, 0.15);
+    border-radius: 8px;
+    padding: 4px;
+}
+
+menuitem {
+    padding: 6px 12px;
+    border-radius: 4px;
+}
+
+menuitem:hover {
+    background: rgba(233, 69, 96, 0.15);
+}
+
+/* === TAB === */
+tabbar tab {
+    background: transparent;
+    border-bottom: 2px solid transparent;
+    padding: 8px 16px;
+    color: #8888aa;
+}
+
+tabbar tab:checked {
+    border-bottom-color: @accent_color;
+    color: @window_fg_color;
+}
+
+/* === LEVEL BAR === */
+levelbar block {
+    background: rgba(233, 69, 96, 0.2);
+    border-radius: 2px;
+}
+
+levelbar block.filled {
+    background: @accent_color;
+}
+
+/* === CALENDAR === */
+calendar {
+    background: @window_bg_color;
+    color: @window_fg_color;
+}
+
+calendar:selected {
+    background: @accent_color;
+    color: white;
+    border-radius: 24px;
+}
+
+/* === FILE CHOOSER === */
+filechooser #pathbar {
+    background: @headerbar_bg_color;
+    border-bottom: 1px solid @headerbar_border_color;
+}
+
+/* === NOTEBOOK === */
+notebook > header > tabs > tab {
+    background: transparent;
+    border-bottom: 2px solid transparent;
+}
+
+notebook > header > tabs > tab:checked {
+    border-bottom-color: @accent_color;
+}
+
+/* === DIALOGS === */
+dialog {
+    background: @window_bg_color;
+}
+
+messagedialog .title-1 {
+    color: @accent_color;
+    font-weight: bold;
+}
+
+/* === SPINBUTTON === */
+spinbutton button {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+}
+
+spinbutton button:hover {
+    background: rgba(233, 69, 96, 0.15);
+}
+
+/* === COMBOBOX === */
+combobox window {
+    background: @popover_bg_color;
+    border: 1px solid rgba(233, 69, 96, 0.2);
+    border-radius: 8px;
+}
+
+/* === LINK === */
+link {
+    color: @accent_color;
+}
+
+link:visited {
+    color: #b03550;
+}
+
+/* === SELECTION === */
+selection {
+    background: @accent_bg_color;
+    color: white;
+}

@@ -1,0 +1,28 @@
+# Alias rules
+# Format: alias|canonical
+
+fox|firefox
+browser|firefox
+brauzer|firefox
+google|google-chrome
+tg|telegram
+game|steam
+oyun|steam
+term|gnome-terminal
+konsol|terminal
+vs|code
+fayllar|nautilus
+files|nautilus
+mail|thunderbird
+email|thunderbird
+music|spotify
+notepad|gedit
+torrent|qbittorrent
+3d|blender
+vektor|inkscape
+node|nodejs
+python|python3
+docker|docker.io
+update|sistemi yenilə
+shutdown|sistemi bağla
+restart|yenidən başlat

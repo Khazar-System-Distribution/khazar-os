@@ -1,0 +1,49 @@
+#!/bin/bash
+# KhazarOS — İlk açılış qarşılama/setup
+
+export DISPLAY=:0
+export XAUTHORITY="$HOME/.Xauthority"
+
+WELCOME_TITLE="KhazarOS-a xoş gəlmisiniz"
+WELCOME_TEXT="AI əsaslı əməliyyat sistemi.\n\nSəsli və ya mətn əmrləri ilə kompüterinizi idarə edin:\n\n• firefox aç\n• wifi söndür\n• səs artır\n• sistemi yenilə"
+
+# Zenity dialoqu (GNOME-da)
+if command -v zenity &>/dev/null; then
+    zenity --info \
+        --title="$WELCOME_TITLE" \
+        --text="$WELCOME_TEXT" \
+        --width=500 \
+        --height=300 \
+        --icon-name=khazar-logo
+
+    # AI modelini seç
+    MODEL=$(zenity --file-selection \
+        --title="AI Model seçin (GGUF formatı)" \
+        --file-filter="GGUF files (*.gguf) | *.gguf" \
+        2>/dev/null)
+
+    if [ -n "$MODEL" ]; then
+        mkdir -p /var/lib/khazar/models
+        cp "$MODEL" /var/lib/khazar/models/default.gguf
+        zenity --info --text="Model yükləndi. Khazar AI hazırdır." --width=300
+        systemctl enable ai-model-runtime.service --now
+        systemctl enable ai-intent-classifier.service --now
+    else
+        zenity --info --text="Model seçilmədi. Tier 1 (LLM) deaktivdir.\nTier 0 əsas əmrlər işləkdir." --width=400
+    fi
+fi
+
+# Terminal-da da göstər
+echo ""
+echo "  ╔══════════════════════════════════════════╗"
+echo "  ║        KhazarOS v0.1.0                  ║"
+echo "  ║        AI Desktop Operating System       ║"
+echo "  ╚══════════════════════════════════════════╝"
+echo ""
+echo "  İstifadə:  kha 'firefox aç'"
+echo "  Status:    kha status"
+echo "  Kömək:     kha help"
+echo ""
+
+# Disable autostart after first run
+rm -f "$HOME/.config/autostart/khazar-welcome.desktop"

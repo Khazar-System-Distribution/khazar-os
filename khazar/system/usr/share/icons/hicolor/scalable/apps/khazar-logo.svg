@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="100%" stop-color="#16213e"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f3460"/>
+      <stop offset="100%" stop-color="#533483"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="24" fill="url(#bg)"/>
+  <circle cx="64" cy="52" r="32" fill="url(#accent)" opacity="0.8"/>
+  <text x="64" y="60" font-family="sans-serif" font-size="28" font-weight="bold"
+        fill="#e94560" text-anchor="middle">K</text>
+  <rect x="24" y="92" width="80" height="8" rx="4" fill="#e94560" opacity="0.6"/>
+  <rect x="40" y="104" width="48" height="6" rx="3" fill="#e94560" opacity="0.4"/>
+</svg>

@@ -1,0 +1,36 @@
+# Regex rules - her setir bir qayda
+# Format: pattern|intent|priority
+
+^(.*) aç$|open_application|10
+^(.*) ac$|open_application|10
+^(.*) open$|open_application|9
+^(.*) start$|open_application|9
+^(.*) başlat$|open_application|9
+^(.*) launch$|open_application|9
+^(.*) bağla$|close_application|10
+^(.*) close$|close_application|9
+^(.*) kapat$|close_application|9
+^(.*) söndür$|close_application|9
+^(.*) quraşdır$|install_package|10
+^(.*) install$|install_package|9
+^(.*) sil$|remove_package|10
+^(.*) remove$|remove_package|9
+^(.*) ara$|search_package|10
+^(.*) axtar$|search_package|10
+^sistemi yenilə$|system_update|10
+^update system$|system_update|10
+^sistemi bağla$|system_shutdown|10
+^shutdown$|system_shutdown|10
+^reboot$|system_reboot|10
+^sleep$|system_suspend|9
+^lock$|system_lock|10
+^logout$|system_logout|10
+^wifi aç$|network_enable|10
+^wifi söndür$|network_disable|10
+^wifi status$|network_status|10
+^volume up$|volume_up|10
+^volume down$|volume_down|10
+^mute$|volume_mute|10
+^brightness up$|brightness_up|10
+^brightness down$|brightness_down|10
+^screenshot$|screenshot|10

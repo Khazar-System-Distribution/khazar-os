@@ -1,0 +1,110 @@
+name: Build KhazarOS Live ISO
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-iso:
+    name: Build ISO
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq gcc make curl xorriso squashfs-tools isolinux
+
+      - name: Build Khazar platform
+        run: |
+          make sdk
+          make -C sdk test
+          make all
+
+      - name: Download Fedora 40 Live ISO
+        run: |
+          curl -L -o fedora.iso \
+            "https://archives.fedoraproject.org/pub/archive/fedora/linux/releases/40/Workstation/x86_64/iso/Fedora-Workstation-Live-x86_64-40-1.14.iso"
+          ls -lah fedora.iso
+          file fedora.iso
+
+      - name: Extract and inject Khazar
+        run: |
+          mkdir -p iso-mount squashfs-root
+
+          # Mount ISO
+          sudo mount -o loop fedora.iso iso-mount
+
+          # Extract the LiveOS squashfs
+          sudo unsquashfs -d squashfs-root iso-mount/LiveOS/squashfs.img
+
+          # Inject Khazar binaries
+          for comp in orchestrator rule-engine policy-engine model-runtime intent-classifier; do
+            [ -f "components/$comp/ai-$comp" ] && sudo cp "components/$comp/ai-$comp" squashfs-root/usr/local/bin/
+          done
+          for agent in desktop package network power audio; do
+            [ -f "agents/${agent}-agent/ai-${agent}-agent" ] && sudo cp "agents/${agent}-agent/ai-${agent}-agent" squashfs-root/usr/local/bin/
+          done
+          [ -f distro/cli/kha ] && sudo cp distro/cli/kha squashfs-root/usr/local/bin/
+          sudo chmod +x squashfs-root/usr/local/bin/* 2>/dev/null || true
+
+          # Inject configs
+          sudo mkdir -p squashfs-root/etc/khazar/policies squashfs-root/etc/systemd/system
+          sudo cp distro/configs/*.toml squashfs-root/etc/khazar/ 2>/dev/null || true
+          sudo cp distro/systemd/*.service distro/systemd/khazar.target squashfs-root/etc/systemd/system/ 2>/dev/null || true
+
+          # Repack squashfs
+          sudo mksquashfs squashfs-root new-squashfs.img -comp xz -b 1M
+          ls -lah new-squashfs.img
+
+      - name: Rebuild ISO
+        run: |
+          mkdir -p new-iso
+          # Copy everything from original ISO
+          sudo cp -r iso-mount/* new-iso/
+          # Replace squashfs with our modified one
+          sudo cp new-squashfs.img new-iso/LiveOS/squashfs.img
+          sudo umount iso-mount 2>/dev/null || true
+
+          # Build new ISO
+          sudo xorriso -as mkisofs \
+            -V "KhazarOS" \
+            -J -R -l \
+            -iso-level 3 \
+            -o khazaros-live-x86_64.iso \
+            new-iso/
+
+          ls -lah khazaros-live-x86_64.iso
+          sha256sum khazaros-live-x86_64.iso > khazaros-live-x86_64.iso.sha256
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: KhazarOS ${{ github.ref_name }}
+          files: |
+            khazaros-live-x86_64.iso
+            khazaros-live-x86_64.iso.sha256
+          body: |
+            ## KhazarOS ${{ github.ref_name }}
+
+            Fedora 40 Workstation Live ISO with Khazar AI pre-installed.
+
+            ### Download
+            - `khazaros-live-x86_64.iso` — Bootable Live ISO (~2 GB)
+
+            ### Usage
+            ```bash
+            # USB
+            sudo dd if=khazaros-live-x86_64.iso of=/dev/sdX bs=4M status=progress
+            # QEMU
+            qemu-system-x86_64 -m 4096 -enable-kvm -cdrom khazaros-live-x86_64.iso
+            ```
+          draft: false
+          prerelease: true

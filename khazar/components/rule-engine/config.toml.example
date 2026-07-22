@@ -1,0 +1,35 @@
+# AI Rule Engine Konfiqurasiya Fayli
+
+socket_path="/run/ai-rule-engine.sock"
+max_connections=256
+request_timeout_ms=3000
+
+# Tier 0 pipeline modullari
+enable_cache=true
+enable_regex=true
+enable_tokens=true
+enable_intent_table=true
+enable_alias=true
+enable_fuzzy=true
+
+# Daemon
+daemonize=false
+pid_file="/run/ai-rule-engine.pid"
+
+# Xarici qayda fayllari
+rules_dir="/etc/ai-rule-engine/rules"
+
+# Logging
+log_file="/var/log/ai-rule-engine.log"
+log_level=2
+
+# Cache
+cache_cleanup_interval=300
+
+# Confidence threshold-lar
+fuzzy_threshold=0.70
+cache_confidence_threshold=0.99
+regex_confidence_threshold=0.85
+token_confidence_threshold=0.50
+intent_confidence_threshold=0.99
+alias_confidence_threshold=0.75

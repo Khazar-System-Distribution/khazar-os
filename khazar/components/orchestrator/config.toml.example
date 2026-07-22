@@ -1,0 +1,6 @@
+socket_path = "/run/ai-orchestrator.sock"
+max_connections = 256
+request_timeout_ms = 3000
+enable_metrics = true
+log_level = "INFO"
+log_file = "/var/log/ai-orchestrator.log"

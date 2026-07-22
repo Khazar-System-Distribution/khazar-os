@@ -1,0 +1,5 @@
+socket_path="/run/ai-policy-engine.sock"
+max_connections=64
+policy_dir="/etc/ai-policy-engine/rules"
+log_level=2
+daemonize=false

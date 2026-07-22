@@ -1,0 +1,73 @@
+/* KhazarOS GDM Login Screen */
+/* ============================ */
+
+@define-color accent_color #e94560;
+@define-color accent_bg_color #0f3460;
+@define-color window_bg_color #1a1a2e;
+@define-color headerbar_bg_color #16213e;
+@define-color card_bg_color #0f3460;
+@define-color text_color #e0e0e0;
+@define-color dim_text_color #8888aa;
+
+/* Background */
+#lockDialogGroup {
+    background: #1a1a2e url("file:///usr/share/backgrounds/khazar/gdm-bg.png");
+    background-size: cover;
+    background-position: center;
+}
+
+/* Login button */
+.login-dialog-button {
+    background: #e94560;
+    color: white;
+    border-radius: 8px;
+    border: none;
+    padding: 10px 32px;
+    font-weight: bold;
+}
+
+.login-dialog-button:hover {
+    background: #c73550;
+}
+
+.login-dialog-button:active {
+    background: #a02540;
+}
+
+/* User list */
+.user-widget {
+    background: rgba(15, 52, 96, 0.8);
+    border-radius: 12px;
+    padding: 8px 16px;
+}
+
+.user-widget:selected {
+    background: rgba(233, 69, 96, 0.8);
+}
+
+/* Password entry */
+.login-dialog-prompt-entry {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid #0f3460;
+    border-radius: 8px;
+    color: white;
+    padding: 8px 12px;
+    font-size: 14pt;
+}
+
+.login-dialog-prompt-entry:focus {
+    border-color: #e94560;
+}
+
+/* Clock */
+#clock {
+    color: white;
+    font-size: 72pt;
+    font-weight: 300;
+}
+
+/* Date */
+#date {
+    color: #e94560;
+    font-size: 18pt;
+}

@@ -1,0 +1,6 @@
+socket_path="/run/ai-intent-classifier.sock"
+model_runtime_socket="/run/ai-model-runtime.sock"
+max_connections=16
+log_level=2
+daemonize=false
+fallback_to_local=true

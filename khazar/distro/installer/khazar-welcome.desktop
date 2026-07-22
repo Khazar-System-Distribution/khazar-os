@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=KhazarOS Welcome
+Comment=Initial setup wizard for KhazarOS
+Exec=/usr/bin/khazar-welcome
+Terminal=false
+NoDisplay=true
+X-GNOME-Autostart-enabled=true

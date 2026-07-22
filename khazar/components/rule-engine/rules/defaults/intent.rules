@@ -1,0 +1,26 @@
+# Intent rules - exact match
+# Format: query|intent|target|action
+
+firefox aç|open_application|firefox|aç
+chrome aç|open_application|google-chrome|aç
+telegram aç|open_application|telegram|aç
+steam aç|open_application|steam|aç
+spotify aç|open_application|spotify|aç
+discord aç|open_application|discord|aç
+firefox bağla|close_application|firefox|bağla
+steam quraşdır|install_package|steam|quraşdır
+firefox quraşdır|install_package|firefox|quraşdır
+vscode quraşdır|install_package|code|quraşdır
+steam sil|remove_package|steam|sil
+sistemi yenilə|system_update|system|yenilə
+sistemi bağla|system_shutdown|system|bağla
+yenidən başlat|system_reboot|system|reboot
+ekranı kilidlə|system_lock|system|lock
+wifi aç|network_enable|wifi|aç
+wifi söndür|network_disable|wifi|söndür
+sesi artır|volume_up|volume|up
+sesi azalt|volume_down|volume|down
+mute|volume_mute|volume|mute
+parlaqlığı artır|brightness_up|brightness|up
+parlaqlığı azalt|brightness_down|brightness|down
+screenshot|screenshot|screen|capture

@@ -1,0 +1,160 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://devuan.kg/khazar/ai-protocol/action-schema.json",
+    "title": "Intent/Action Schema",
+    "description": "Rule Engine intent çıxışı və agent action formatı üçün JSON Schema.",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Request ID (cavabla cütləşmə üçün)"
+        },
+        "type": {
+            "type": "string",
+            "const": "response"
+        },
+        "intent": {
+            "type": "string",
+            "maxLength": 128,
+            "enum": [
+                "open_application",
+                "close_application",
+                "install_package",
+                "remove_package",
+                "search_package",
+                "system_update",
+                "system_shutdown",
+                "system_reboot",
+                "system_suspend",
+                "system_lock",
+                "system_hibernate",
+                "system_logout",
+                "network_enable",
+                "network_disable",
+                "network_status",
+                "volume_up",
+                "volume_down",
+                "volume_mute",
+                "volume_set",
+                "brightness_up",
+                "brightness_down",
+                "brightness_set",
+                "screenshot",
+                "file_open",
+                "file_search",
+                "window_minimize",
+                "window_maximize",
+                "notification_send",
+                "clipboard_copy",
+                "process_kill",
+                "unknown"
+            ],
+            "description": "Tapılmış intent"
+        },
+        "target": {
+            "type": "string",
+            "maxLength": 256,
+            "description": "Əmrin hədəfi (məs. 'firefox')"
+        },
+        "action": {
+            "type": "string",
+            "maxLength": 128,
+            "description": "Aşkarlanmış əmr feli (məs. 'aç')"
+        },
+        "confidence": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0,
+            "description": "İnam dərəcəsi"
+        },
+        "source": {
+            "type": "string",
+            "enum": ["cache", "regex", "token", "intent", "alias", "fuzzy", "none"],
+            "description": "Intent-in tapıldığı pipeline mərhələsi"
+        },
+        "matched": {
+            "type": "string",
+            "maxLength": 128,
+            "description": "Uyğun gələn pattern/rule"
+        },
+        "multi": {
+            "type": "boolean",
+            "description": "Çoxlu nəticə rejimi (məs. 'firefox aç və telegram aç')"
+        },
+        "results": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "intent": { "type": "string" },
+                    "target": { "type": "string" },
+                    "action": { "type": "string" },
+                    "confidence": { "type": "number" },
+                    "source": { "type": "string" }
+                },
+                "required": ["intent", "confidence", "source"]
+            },
+            "description": "Çoxlu nəticə siyahısı (yalnız multi=true olanda)"
+        }
+    },
+    "required": ["id", "type", "intent", "confidence", "source"],
+
+    "x-pipelineStages": [
+        {"stage": "cache",  "method": "Hash lookup",      "speed": "O(1)", "limit": 256},
+        {"stage": "regex",  "method": "POSIX regex",      "speed": "O(n)", "limit": 1024},
+        {"stage": "token",  "method": "Keyword + scoring", "speed": "O(n)", "limit": 1024},
+        {"stage": "intent", "method": "Exact table lookup","speed": "O(n)", "limit": 2048},
+        {"stage": "alias",  "method": "Synonym resolution","speed": "O(n)", "limit": 1024},
+        {"stage": "fuzzy",  "method": "Levenshtein distance","speed": "O(n²)","limit": "n/a"}
+    ],
+
+    "x-examples": {
+        "singleMatch": {
+            "id": 1,
+            "type": "response",
+            "intent": "open_application",
+            "target": "firefox",
+            "action": "aç",
+            "confidence": 1.0,
+            "source": "regex",
+            "matched": "^(.*) aç$"
+        },
+        "unknownMatch": {
+            "id": 1,
+            "type": "response",
+            "intent": "unknown",
+            "confidence": 0.0,
+            "source": "none"
+        },
+        "multiMatch": {
+            "id": 1,
+            "type": "response",
+            "multi": true,
+            "results": [
+                {
+                    "intent": "open_application",
+                    "target": "firefox",
+                    "action": "aç",
+                    "confidence": 0.95,
+                    "source": "regex"
+                },
+                {
+                    "intent": "open_application",
+                    "target": "telegram",
+                    "action": "aç",
+                    "confidence": 0.92,
+                    "source": "regex"
+                }
+            ]
+        },
+        "confidenceThresholds": {
+            "cache": 0.8,
+            "regex": 0.9,
+            "token": 0.7,
+            "intent": 0.9,
+            "alias": 0.8,
+            "fuzzy": 0.6
+        }
+    }
+}

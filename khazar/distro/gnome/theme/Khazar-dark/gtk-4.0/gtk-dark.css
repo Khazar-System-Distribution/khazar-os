@@ -1,0 +1,19 @@
+/* KhazarOS GTK4 Dark Mode Overrides */
+@define-color window_bg_color #1a1a2e;
+@define-color view_bg_color #1a1a2e;
+@define-color card_bg_color #0f3460;
+@define-color headerbar_bg_color #16213e;
+@define-color popover_bg_color #16213e;
+
+/* Dark-specific tweaks */
+window {
+    background-color: @window_bg_color;
+}
+
+headerbar {
+    background-color: @headerbar_bg_color;
+}
+
+popover {
+    background-color: @popover_bg_color;
+}

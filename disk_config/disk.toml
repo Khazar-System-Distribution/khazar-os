@@ -1,3 +1,10 @@
-[[customizations.filesystem]]
-mountpoint = "/"
-minsize = "20 GiB"
+[customizations]
+hostname = "khazaros"
+
+[customizations.kernel]
+append = "quiet rhgb"
+
+[customizations.user]
+name = "khazar"
+key = ""
+groups = ["wheel", "khazar"]

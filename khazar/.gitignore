@@ -1,0 +1,5 @@
+*.o
+*.a
+components/*/ai-*
+agents/*/ai-*
+tests/test_runner

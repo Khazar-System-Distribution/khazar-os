@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=KhazarOS
+Description=KhazarOS Boot Screen
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/khazar
+ScriptFile=/usr/share/plymouth/themes/khazar/khazar.script

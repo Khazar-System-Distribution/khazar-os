@@ -1,0 +1,33 @@
+# Token rules
+# Format: token|intent|weight
+
+aç|open_application|5
+open|open_application|5
+start|open_application|4
+başlat|open_application|4
+bağla|close_application|5
+close|close_application|5
+söndür|close_application|4
+kill|close_application|4
+quraşdır|install_package|5
+install|install_package|5
+sil|remove_package|5
+remove|remove_package|5
+ara|search_package|5
+axtar|search_package|5
+yenilə|system_update|5
+update|system_update|5
+shutdown|system_shutdown|5
+reboot|system_reboot|5
+suspend|system_suspend|5
+lock|system_lock|5
+logout|system_logout|5
+hibernate|system_hibernate|5
+wifi|network_enable|5
+internet|network_enable|4
+bluetooth|network_enable|4
+səs|volume_up|5
+volume|volume_up|5
+parlaqlıq|brightness_up|5
+brightness|brightness_up|5
+screenshot|screenshot|5

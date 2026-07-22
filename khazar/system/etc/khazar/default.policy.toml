@@ -1,0 +1,95 @@
+# KhazarOS daemon policy rules
+# /etc/khazar/policies/default.toml
+
+[rule.default_allow]
+capability = "*"
+agent = "*"
+action = "allow"
+priority = 0
+message = "default allow"
+
+[rule.allow_desktop]
+capability = "open_application"
+agent = "*"
+action = "allow"
+priority = 10
+message = "application control allowed"
+
+[rule.allow_close]
+capability = "close_application"
+agent = "*"
+action = "allow"
+priority = 10
+
+[rule.allow_package_install]
+capability = "install_package"
+agent = "package-agent"
+action = "allow"
+priority = 20
+message = "package installation allowed"
+
+[rule.allow_package_search]
+capability = "search_package"
+agent = "*"
+action = "allow"
+priority = 10
+
+[rule.allow_update]
+capability = "system_update"
+agent = "package-agent"
+action = "allow"
+priority = 20
+message = "system update allowed"
+
+[rule.deny_untrusted_install]
+capability = "install_package"
+agent = "*"
+action = "deny"
+priority = 25
+message = "yalnız package-agent paket quraşdıra bilər"
+
+[rule.deny_package_remove]
+capability = "remove_package"
+agent = "package-agent"
+action = "allow"
+priority = 20
+message = "package removal requires confirmation"
+
+[rule.allow_network]
+capability = "network_management"
+agent = "network-agent"
+action = "allow"
+priority = 10
+
+[rule.allow_audio]
+capability = "audio_control"
+agent = "audio-agent"
+action = "allow"
+priority = 10
+
+[rule.deny_shutdown]
+capability = "system_shutdown"
+agent = "power-agent"
+action = "allow"
+priority = 30
+require_root = false
+message = "shutdown allowed via power agent"
+
+[rule.deny_reboot]
+capability = "system_reboot"
+agent = "power-agent"
+action = "allow"
+priority = 30
+message = "reboot allowed via power agent"
+
+[rule.allow_screenshot]
+capability = "screenshot"
+agent = "*"
+action = "allow"
+priority = 10
+
+[rule.allow_notification]
+capability = "notification"
+agent = "*"
+action = "allow"
+priority = 10

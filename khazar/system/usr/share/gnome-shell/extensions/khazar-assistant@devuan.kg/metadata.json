@@ -1,0 +1,10 @@
+{
+  "uuid": "khazar-assistant@devuan.kg",
+  "name": "Khazar AI Assistant",
+  "description": "AI-powered command control for KhazarOS — voice and text input",
+  "version": 1,
+  "shell-version": ["45", "46"],
+  "url": "https://github.com/Khazar-System-Distribution/khazar",
+  "settings-schema": "org.gnome.shell.extensions.khazar",
+  "gettext-domain": "khazar-assistant"
+}

@@ -1,0 +1,136 @@
+# KhazarOS — Fedora Silverblue əsaslı AI Desktop OS
+# Build:  podman build -t khazaros:0.1.0 -f distro/bootc/Containerfile .
+# Deploy: bootc switch khazaros:0.1.0
+# ISO:    make -C distro build-iso
+
+FROM quay.io/fedora/fedora-bootc:40
+
+# ── Khazar istifadəçisi ──────────────────────────────────
+RUN groupadd -r khazar && useradd -r -s /sbin/nologin -d /var/lib/khazar -g khazar khazar
+RUN mkdir -p /var/lib/khazar/{bin,models,run} /run/khazar && chown -R khazar:khazar /var/lib/khazar /run/khazar
+
+# ── Asılılıqlar ──────────────────────────────────────────
+RUN rpm-ostree install --apply-live \
+    gcc make git socat python3 \
+    nmcli NetworkManager-wifi \
+    pulseaudio-utils \
+    gnome-shell-extension-tool \
+    gnome-tweaks \
+    papirus-icon-theme \
+    dejavu-sans-fonts \
+    jetbrains-mono-fonts
+
+# ── Khazar Platform qurulur ─────────────────────────────
+COPY . /tmp/khazar-build
+WORKDIR /tmp/khazar-build
+RUN make all
+RUN mkdir -p /var/lib/khazar/bin && \
+    cp components/orchestrator/ai-orchestrator /var/lib/khazar/bin/ && \
+    cp components/rule-engine/ai-rule-engine /var/lib/khazar/bin/ && \
+    cp components/policy-engine/ai-policy-engine /var/lib/khazar/bin/ && \
+    cp components/model-runtime/ai-model-runtime /var/lib/khazar/bin/ && \
+    cp components/intent-classifier/ai-intent-classifier /var/lib/khazar/bin/ && \
+    cp agents/desktop-agent/ai-desktop-agent /var/lib/khazar/bin/ && \
+    cp agents/package-agent/ai-package-agent /var/lib/khazar/bin/ && \
+    cp agents/network-agent/ai-network-agent /var/lib/khazar/bin/ && \
+    cp agents/power-agent/ai-power-agent /var/lib/khazar/bin/ && \
+    cp agents/audio-agent/ai-audio-agent /var/lib/khazar/bin/
+
+# ── Sistem identikliyi ──────────────────────────────────
+RUN mkdir -p /usr/share/khazar/configs
+COPY distro/configs/os-release /etc/os-release
+COPY distro/configs/issue /etc/issue
+RUN ln -sf khazar-release /etc/system-release
+
+# ── Konfiqurasiya ───────────────────────────────────────
+RUN mkdir -p /etc/khazar/policies
+COPY distro/configs/orchestrator.toml /etc/khazar/
+COPY distro/configs/rule-engine.toml /etc/khazar/
+COPY distro/configs/policy-engine.toml /etc/khazar/
+COPY distro/configs/model-runtime.toml /etc/khazar/
+COPY distro/configs/intent-classifier.toml /etc/khazar/
+COPY distro/configs/default.policy.toml /etc/khazar/policies/
+RUN chown -R khazar:khazar /etc/khazar
+
+# ── GRUB Boot Tema ──────────────────────────────────────
+COPY distro/branding/grub /boot/grub2/themes/khazar
+COPY distro/branding/khazar-logo.png /boot/grub2/themes/khazar/background.png
+RUN echo 'GRUB_THEME="/boot/grub2/themes/khazar/theme.txt"' >> /etc/default/grub
+
+# ── Plymouth Boot Animasiya ─────────────────────────────
+RUN mkdir -p /usr/share/plymouth/themes/khazar
+COPY distro/branding/plymouth /usr/share/plymouth/themes/khazar
+COPY distro/branding/khazar-logo.png /usr/share/plymouth/themes/khazar/logo.png
+RUN plymouth-set-default-theme khazar 2>/dev/null || true
+
+# ── GDM Login Ekranı ────────────────────────────────────
+COPY distro/branding/gdm/khazar-gdm.css /usr/share/gnome-shell/theme/
+RUN mkdir -p /usr/share/backgrounds/khazar
+COPY distro/branding/khazar-logo.png /usr/share/backgrounds/khazar/gdm-bg.png
+
+# ── GNOME Shell + GTK Tema ──────────────────────────────
+RUN mkdir -p /usr/share/themes/Khazar-dark/gnome-shell/assets \
+             /usr/share/themes/Khazar-dark/gtk-4.0
+COPY distro/gnome/theme/Khazar-dark /usr/share/themes/Khazar-dark
+RUN mkdir -p /usr/share/khazar/gnome/theme && \
+    cp -r /usr/share/themes/Khazar-dark /usr/share/khazar/gnome/theme/
+
+# ── GNOME Extension ─────────────────────────────────────
+RUN mkdir -p /usr/share/gnome-shell/extensions/khazar-assistant@devuan.kg/schemas \
+             /usr/share/khazar/gnome/extensions/khazar-assistant@devuan.kg/schemas
+COPY distro/gnome/extensions/khazar-assistant@devuan.kg /usr/share/gnome-shell/extensions/khazar-assistant@devuan.kg
+COPY distro/gnome/extensions/khazar-assistant@devuan.kg /usr/share/khazar/gnome/extensions/khazar-assistant@devuan.kg
+
+# ── GSettings Default-ları ──────────────────────────────
+COPY distro/gnome/settings/00-khazar-defaults.gschema.override /usr/share/glib-2.0/schemas/
+RUN glib-compile-schemas /usr/share/glib-2.0/schemas/
+
+# ── Divar Kağızları + İkonlar ───────────────────────────
+RUN mkdir -p /usr/share/backgrounds/khazar \
+             /usr/share/icons/hicolor/scalable/apps \
+             /usr/share/icons/hicolor/symbolic/apps
+COPY distro/branding/khazar-logo.png /usr/share/backgrounds/khazar/khazar-default.png
+COPY distro/branding/khazar-logo.png /usr/share/backgrounds/khazar/khazar-dark.png
+COPY distro/branding/khazar-logo.svg /usr/share/icons/hicolor/scalable/apps/khazar-logo.svg
+
+# ── CLI Alət ────────────────────────────────────────────
+COPY distro/cli/kha /usr/bin/kha
+RUN chmod +x /usr/bin/kha
+
+# ── systemd Daemon-lar ──────────────────────────────────
+COPY distro/systemd/*.service /etc/systemd/system/
+COPY distro/systemd/khazar.target /etc/systemd/system/
+RUN systemctl enable khazar.target && \
+    systemctl enable khazar-identity.service && \
+    systemctl enable ai-rule-engine.service && \
+    systemctl enable ai-policy-engine.service && \
+    systemctl enable ai-orchestrator.service && \
+    systemctl enable ai-desktop-agent.service && \
+    systemctl enable ai-package-agent.service && \
+    systemctl enable ai-network-agent.service && \
+    systemctl enable ai-power-agent.service && \
+    systemctl enable ai-audio-agent.service
+
+# ── GNOME Setup (ilk açılışda) ──────────────────────────
+COPY distro/gnome/install.sh /usr/share/khazar/gnome/
+COPY distro/gnome/settings/gnome-setup.sh /usr/share/khazar/gnome/settings/
+RUN chmod +x /usr/share/khazar/gnome/install.sh /usr/share/khazar/gnome/settings/gnome-setup.sh
+
+# ── İlk açılış wizard ───────────────────────────────────
+COPY distro/installer/khazar-welcome /usr/bin/khazar-welcome
+COPY distro/installer/khazar-welcome.desktop /etc/xdg/autostart/
+RUN chmod +x /usr/bin/khazar-welcome
+
+# ── Təmizlik ────────────────────────────────────────────
+RUN rm -rf /tmp/khazar-build
+RUN rpm-ostree cleanup -m
+
+# ── Metadata ────────────────────────────────────────────
+LABEL distro.name="KhazarOS"
+LABEL distro.version="0.1.0"
+LABEL distro.codename="Xəzər"
+LABEL distro.family="Fedora Silverblue"
+LABEL distro.description="AI-powered desktop operating system — səsli və mətnli əmrlərlə idarə"
+LABEL distro.homepage="https://github.com/Khazar-System-Distribution/khazar"
+
+CMD ["/sbin/init"]

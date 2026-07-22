@@ -1,0 +1,89 @@
+# Policy Engine - default security rules
+# Format: [rule.name] bloku, her blok bir qayda
+
+[rule.allow_default]
+capability = "*"
+agent = "*"
+action = "allow"
+priority = 0
+message = "default allow all"
+
+[rule.allow_open_app]
+capability = "open_application"
+agent = "*"
+action = "allow"
+priority = 10
+message = "application opening is allowed"
+
+[rule.allow_close_app]
+capability = "close_application"
+agent = "*"
+action = "allow"
+priority = 10
+
+[rule.allow_install]
+capability = "install_package"
+agent = "package-agent"
+action = "allow"
+priority = 10
+message = "package manager may install"
+
+[rule.allow_search]
+capability = "search_package"
+agent = "*"
+action = "allow"
+priority = 10
+
+[rule.deny_install_untrusted]
+capability = "install_package"
+agent = "*"
+action = "deny"
+priority = 20
+message = "only package-agent may install packages"
+
+[rule.deny_shutdown]
+capability = "system_shutdown"
+agent = "*"
+action = "deny"
+priority = 50
+require_root = true
+message = "system shutdown denied by policy"
+
+[rule.deny_reboot]
+capability = "system_reboot"
+agent = "*"
+action = "deny"
+priority = 50
+require_root = true
+message = "system reboot denied by policy"
+
+[rule.deny_file_write]
+capability = "remove_package"
+agent = "*"
+action = "deny"
+priority = 30
+message = "package removal requires explicit permission"
+
+[rule.allow_network]
+capability = "network_management"
+agent = "*"
+action = "allow"
+priority = 10
+
+[rule.allow_audio]
+capability = "audio_control"
+agent = "*"
+action = "allow"
+priority = 10
+
+[rule.allow_screenshot]
+capability = "screenshot"
+agent = "*"
+action = "allow"
+priority = 10
+
+[rule.allow_notification]
+capability = "notification"
+agent = "*"
+action = "allow"
+priority = 10

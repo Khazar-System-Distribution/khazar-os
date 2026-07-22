@@ -1,0 +1,8 @@
+{
+  "uuid": "khazar@devuan.kg",
+  "name": "Khazar AI Assistant",
+  "description": "AI voice/text command control for GNOME Shell",
+  "version": 1,
+  "shell-version": ["45", "46"],
+  "url": "https://github.com/Khazar-System-Distribution/khazar"
+}

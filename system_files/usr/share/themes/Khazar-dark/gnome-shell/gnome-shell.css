@@ -1,0 +1,235 @@
+/* KhazarOS GNOME Shell Theme */
+/* =========================== */
+
+/* Palette */
+$accent: #e94560;
+$accent_hover: #c73550;
+$dark_bg: #1a1a2e;
+$panel_bg: rgba(22, 33, 62, 0.85);
+$card_bg: #0f3460;
+$text: #e0e0e0;
+$dim_text: #8888aa;
+$border: rgba(233, 69, 96, 0.2);
+$border_focus: rgba(233, 69, 96, 0.5);
+
+/* === TOP PANEL === */
+#panel {
+    background-color: $panel_bg;
+    border-bottom: 1px solid $border;
+    height: 2.2em;
+}
+
+#panel .panel-button {
+    color: $text;
+    font-weight: normal;
+    padding: 0 8px;
+}
+
+#panel .panel-button:hover {
+    background-color: rgba(233, 69, 96, 0.2);
+    border-radius: 4px;
+}
+
+#panel .panel-button:active,
+#panel .panel-button:checked,
+#panel .panel-button:focus {
+    background-color: rgba(233, 69, 96, 0.3);
+    border-radius: 4px;
+}
+
+/* Activities button */
+#panelActivities .panel-button {
+    color: $accent;
+    font-weight: bold;
+}
+
+/* Clock */
+#panel .clock {
+    color: $text;
+}
+
+/* System indicators */
+.system-status-icon {
+    padding: 0 2px;
+}
+
+/* === DASH (Overview) === */
+#dash {
+    background-color: rgba(26, 26, 46, 0.85);
+    border: 1px solid $border;
+    border-radius: 16px;
+    padding: 8px 4px;
+    margin: 8px;
+}
+
+.dash-item-container .app-well-app .overview-icon {
+    border-radius: 12px;
+    padding: 6px;
+}
+
+.dash-item-container .app-well-app:hover .overview-icon,
+.dash-item-container .app-well-app:selected .overview-icon {
+    background-color: rgba(233, 69, 96, 0.3);
+}
+
+/* === OVERVIEW === */
+#overviewGroup {
+    background-color: rgba(26, 26, 46, 0.92);
+}
+
+.search-entry {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid $border;
+    border-radius: 24px;
+    color: $text;
+    padding: 8px 16px;
+    font-size: 14pt;
+    width: 480px;
+}
+
+.search-entry:focus {
+    border-color: $accent;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* === WORKSPACE SWITCHER === */
+.workspace-thumbnails {
+    background-color: rgba(26, 26, 46, 0.6);
+    border: 1px solid $border;
+    border-radius: 12px;
+    padding: 8px;
+}
+
+.workspace-thumbnail-indicator {
+    border: 2px solid $accent;
+    border-radius: 8px;
+}
+
+/* === POPUPS & MENUS === */
+.popup-menu-boxpointer {
+    -arrow-border-radius: 8px;
+    -arrow-background-color: $card_bg;
+    -arrow-border-color: $border;
+}
+
+.popup-menu-item {
+    color: $text;
+    padding: 8px 12px;
+}
+
+.popup-menu-item:hover,
+.popup-menu-item:focus {
+    background-color: rgba(233, 69, 96, 0.2);
+}
+
+.popup-menu-item:active {
+    background-color: rgba(233, 69, 96, 0.4);
+}
+
+/* Separator */
+.popup-separator-menu-item {
+    -gradient-height: 1px;
+    -gradient-start: transparent;
+    -gradient-end: rgba(233, 69, 96, 0.3);
+}
+
+/* === SLIDER / SCROLLBAR === */
+.slider {
+    -slider-height: 4px;
+    -slider-background-color: rgba(15, 52, 96, 0.5);
+    -slider-active-background-color: $accent;
+    -slider-border-color: transparent;
+    height: 20px;
+}
+
+StScrollBar StButton#vhandle {
+    background-color: rgba(233, 69, 96, 0.4);
+    border-radius: 4px;
+    width: 6px;
+}
+
+/* === NOTIFICATIONS === */
+.notification-banner {
+    background: $card_bg;
+    border: 1px solid $border;
+    border-radius: 12px;
+    margin: 8px;
+}
+
+.notification-banner:hover {
+    background: rgba(15, 52, 96, 0.9);
+}
+
+/* === CALENDAR === */
+.calendar {
+    background: $card_bg;
+    border-radius: 12px;
+    padding: 8px;
+}
+
+.calendar-day-base {
+    color: $text;
+}
+
+.calendar-day-base:hover {
+    background: rgba(233, 69, 96, 0.2);
+    border-radius: 24px;
+}
+
+.calendar-today {
+    background: $accent;
+    border-radius: 24px;
+    color: white;
+    font-weight: bold;
+}
+
+/* === DIALOGS === */
+.modal-dialog {
+    background: $card_bg;
+    border: 1px solid $border;
+    border-radius: 16px;
+    padding: 24px;
+}
+
+.modal-dialog-button-box .button {
+    background: $accent;
+    color: white;
+    border-radius: 8px;
+    padding: 8px 20px;
+}
+
+.modal-dialog-button-box .button:hover {
+    background: $accent_hover;
+}
+
+/* === SWITCHES === */
+.toggle-switch {
+    width: 48px;
+    height: 26px;
+}
+
+.toggle-switch-us {
+    background: rgba(15, 52, 96, 0.6);
+    border-radius: 13px;
+}
+
+.toggle-switch-us:checked {
+    background: $accent;
+}
+
+/* === OSK (On-Screen Keyboard) === */
+.keyboard-key {
+    background: $card_bg;
+    border: 1px solid $border;
+    border-radius: 8px;
+    color: $text;
+}
+
+.keyboard-key:hover {
+    background: rgba(233, 69, 96, 0.2);
+}
+
+.keyboard-key:checked {
+    background: $accent;
+    color: white;
+}

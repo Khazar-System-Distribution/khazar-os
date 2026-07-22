@@ -1,0 +1,4 @@
+khazar/.git
+khazar/tests
+**/*.o
+**/libai-sdk.a

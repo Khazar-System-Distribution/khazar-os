@@ -1,1 +1,10 @@
-iso-gnome.toml
+[customizations]
+hostname = "khazaros"
+
+[customizations.kernel]
+append = "quiet rhgb"
+
+[customizations.user]
+name = "khazar"
+key = ""
+groups = ["wheel", "khazar"]

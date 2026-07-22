@@ -1,0 +1,10 @@
+app:
+  name: khazaros
+  version: "0.1.0"
+
+iso:
+  label: "KhazarOS"
+  product: "KhazarOS"
+  variant: "Silverblue"
+  arch: "x86_64"
+  type: "anaconda-iso"

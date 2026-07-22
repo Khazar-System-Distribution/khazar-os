@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.khazar"
+          path="/org/gnome/shell/extensions/khazar/">
+    <key name="socket-path" type="s">
+      <default>"/run/khazar/orchestrator.sock"</default>
+      <summary>Orchestrator socket path</summary>
+      <description>Unix domain socket path for Khazar AI Orchestrator</description>
+    </key>
+    <key name="enable-shortcut" type="b">
+      <default>true</default>
+      <summary>Enable Ctrl+Space shortcut</summary>
+      <description>Enable the global keyboard shortcut for Khazar command input</description>
+    </key>
+  </schema>
+</schemalist>

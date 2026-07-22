@@ -1,0 +1,44 @@
+// KhazarOS Plymouth Boot Script
+logo = Image("logo.png");
+progress_bar = Image("progress-bar.png");
+
+logo.SetX(Window.GetWidth() / 2 - logo.GetWidth() / 2);
+logo.SetY(Window.GetHeight() / 3 - logo.GetHeight() / 2);
+
+progress_bar.SetX(Window.GetWidth() / 2 - progress_bar.GetWidth() / 2);
+progress_bar.SetY(Window.GetHeight() * 2 / 3);
+
+status = "Starting KhazarOS...";
+status_font = SpriteFont("DejaVu Sans 10");
+
+status_sprite = Sprite();
+status_sprite.SetX(Window.GetWidth() / 2);
+status_sprite.SetY(Window.GetHeight() * 2 / 3 + 30);
+status_sprite.SetImage(status_font.Render(status, 1.0, 1.0, 1.0));
+
+fun refresh_callback () {
+    label = "Booting KhazarOS " + String(Plymouth.GetMode());
+    status_sprite.SetImage(status_font.Render(label, 1.0, 1.0, 1.0));
+}
+
+Plymouth.SetRefreshFunction(refresh_callback);
+
+// Pulse animation
+logo.SetOpacity(0);
+progress_bar.SetOpacity(0);
+
+opacity = 0;
+while (opacity < 1) {
+    opacity += 0.02;
+    logo.SetOpacity(opacity);
+    progress_bar.SetOpacity(opacity);
+}
+
+// Boot progress
+progress = 0;
+while (progress < 100) {
+    progress += 1;
+    progress_bar.SetWidth(progress * progress_bar.GetWidth() / 100);
+    Plymouth.Refresh();
+    sleep(0.02);
+}

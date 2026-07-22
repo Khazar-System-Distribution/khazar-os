@@ -1,0 +1,16 @@
+[Unit]
+Description=Khazar AI Model Runtime (LLM)
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/ai-model-runtime /etc/khazar/model-runtime.toml
+Restart=always
+RestartSec=10
+RuntimeDirectory=khazar
+RuntimeDirectoryMode=0750
+User=khazar
+Group=khazar
+
+[Install]
+WantedBy=multi-user.target

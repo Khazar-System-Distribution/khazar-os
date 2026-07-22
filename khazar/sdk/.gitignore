@@ -1,0 +1,7 @@
+*.o
+*.a
+tests/test_json
+tests/test_protocol
+tests/test_ipc
+tests/test_agent
+tests/test_events
