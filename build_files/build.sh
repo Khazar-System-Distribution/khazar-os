@@ -57,4 +57,5 @@ systemctl enable podman.socket 2>/dev/null || true
 rm -rf /tmp/khazar-src
 dnf5 remove -y gcc make 2>/dev/null || true
 dnf5 clean all
+rm -f /etc/systemd/resolve/stub-resolv.conf 2>/dev/null || true
 ostree container commit
