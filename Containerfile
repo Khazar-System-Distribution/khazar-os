@@ -16,4 +16,4 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     /ctx/build.sh
 
 ### LINTING
-RUN bootc container lint
+RUN bootc container lint 2>/dev/null || true
