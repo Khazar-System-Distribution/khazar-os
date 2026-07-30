@@ -1,0 +1,14 @@
+{
+  "name": "ai-power-agent",
+  "display_name": "AI Power Agent",
+  "upstream": {
+    "homepage": "https://devuan.kg/khazar/ai-power-agent",
+    "bugs": "https://devuan.kg/khazar/ai-power-agent/issues"
+  },
+  "description": "System management agent for Khazar AI platform. Handles shutdown, reboot, suspend, hibernate, lock, and logout operations.",
+  "dependencies": ["ai-sdk"],
+  "keywords": ["ai", "agent", "power", "system", "shutdown", "khazar"],
+  "license": "GPL-3.0-only",
+  "homepage": "https://devuan.kg/khazar/ai-power-agent",
+  "source": "https://devuan.kg/khazar/ai-power-agent"
+}

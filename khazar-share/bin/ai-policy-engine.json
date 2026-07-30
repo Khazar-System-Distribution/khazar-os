@@ -1,0 +1,14 @@
+{
+  "name": "ai-policy-engine",
+  "display_name": "AI Policy Engine",
+  "upstream": {
+    "homepage": "https://devuan.kg/khazar/ai-policy-engine",
+    "bugs": "https://devuan.kg/khazar/ai-policy-engine/issues"
+  },
+  "description": "Security policy engine for Khazar AI platform. Validates every agent operation before execution.",
+  "dependencies": ["ai-sdk"],
+  "keywords": ["ai", "policy", "security", "khazar"],
+  "license": "GPL-3.0-only",
+  "homepage": "https://devuan.kg/khazar/ai-policy-engine",
+  "source": "https://devuan.kg/khazar/ai-policy-engine"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "ai-package-agent",
+  "display_name": "AI Package Agent",
+  "upstream": {
+    "homepage": "https://devuan.kg/khazar/ai-package-agent",
+    "bugs": "https://devuan.kg/khazar/ai-package-agent/issues"
+  },
+  "description": "Package management agent for Khazar AI platform. Installs, removes, searches packages and performs system updates.",
+  "dependencies": ["ai-sdk"],
+  "keywords": ["ai", "agent", "package", "apt", "pacman", "khazar"],
+  "license": "GPL-3.0-only",
+  "homepage": "https://devuan.kg/khazar/ai-package-agent",
+  "source": "https://devuan.kg/khazar/ai-package-agent"
+}

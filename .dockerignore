@@ -1,0 +1,16 @@
+.git
+.gitignore
+*.md
+*.log
+*.qcow2
+*.raw
+*.iso
+build/
+output/
+node_modules/
+__pycache__/
+*.pyc
+*.o
+*.a
+*.so
+*.swp

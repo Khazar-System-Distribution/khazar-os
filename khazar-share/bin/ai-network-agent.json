@@ -1,0 +1,14 @@
+{
+  "name": "ai-network-agent",
+  "display_name": "AI Network Agent",
+  "upstream": {
+    "homepage": "https://devuan.kg/khazar/ai-network-agent",
+    "bugs": "https://devuan.kg/khazar/ai-network-agent/issues"
+  },
+  "description": "Network management agent for Khazar AI platform. Manages WiFi and network connections via nmcli.",
+  "dependencies": ["ai-sdk"],
+  "keywords": ["ai", "agent", "network", "wifi", "nmcli", "khazar"],
+  "license": "GPL-3.0-only",
+  "homepage": "https://devuan.kg/khazar/ai-network-agent",
+  "source": "https://devuan.kg/khazar/ai-network-agent"
+}

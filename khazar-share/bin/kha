@@ -1,0 +1,75 @@
+#!/bin/bash
+# kha — Khazar AI CLI
+# Usage: kha "firefox aç" | kha status | kha restart
+
+ORCH_SOCK="${KH_SOCK:-/run/khazar/ai-orchestrator.sock}"
+
+send() {
+    echo "$1" | socat - "UNIX-CONNECT:$ORCH_SOCK" 2>/dev/null
+}
+
+case "${1:-help}" in
+    help|-h|--help)
+        echo "kha — Khazar AI CLI"
+        echo ""
+        echo "Usage:"
+        echo "  kha <command>        Run an AI command"
+        echo "  kha status           Show system status"
+        echo "  kha restart          Restart Khazar services"
+        echo "  kha install          Install Khazar platform"
+        echo ""
+        echo "Examples:"
+        echo "  kha 'firefox aç'"
+        echo "  kha 'wifi söndür'"
+        echo "  kha 'səs artır'"
+        echo "  kha 'sistemi yenilə'"
+        ;;
+    status)
+        echo "=== Khazar AI Status ==="
+        for svc in ai-orchestrator ai-rule-engine ai-policy-engine ai-model-runtime ai-intent-classifier; do
+            printf "  %-30s " "$svc"
+            systemctl is-active "$svc" 2>/dev/null || echo "not installed"
+        done
+        echo ""
+        echo "=== Agents ==="
+        for ag in ai-desktop-agent ai-package-agent ai-network-agent ai-power-agent ai-audio-agent; do
+            printf "  %-30s " "$ag"
+            systemctl is-active "$ag" 2>/dev/null || echo "not installed"
+        done
+        echo ""
+        echo "=== Sockets ==="
+        ls -la /run/khazar/*.sock 2>/dev/null | awk '{printf "  %s\n", $NF}' || echo "  no sockets"
+        ;;
+    restart)
+        echo "Restarting Khazar..."
+        sudo systemctl restart khazar.target
+        ;;
+    install)
+        sudo bash "$(dirname "$0")/../distro/scripts/install.sh"
+        ;;
+    *)
+        QUERY="$*"
+        if [ -z "$QUERY" ]; then
+            echo "Usage: kha <command>"
+            exit 1
+        fi
+        echo "> $QUERY"
+        RESPONSE=$(send "{\"type\":\"request\",\"id\":$RANDOM,\"query\":\"$QUERY\"}")
+        if [ -z "$RESPONSE" ]; then
+            echo "Error: Orchestrator not running. Run: kha status"
+            exit 1
+        fi
+        echo "$RESPONSE" | python3 -c "
+import sys, json
+try:
+    d = json.load(sys.stdin)
+    s = d.get('status', '?')
+    msg = d.get('payload', {}).get('message', '')
+    print(f'  Status: {s}')
+    if msg: print(f'  Result: {msg}')
+    ec = d.get('error_code', '')
+    if ec: print(f'  Error: {ec}')
+except: print(sys.stdin.read())
+" 2>/dev/null || echo "$RESPONSE"
+        ;;
+esac

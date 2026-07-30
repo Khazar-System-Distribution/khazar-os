@@ -1,0 +1,30 @@
+FROM fedora:40
+
+RUN dnf install -y socat && dnf clean all
+
+RUN groupadd -r khazar && useradd -r -s /sbin/nologin -d /var/lib/khazar -g khazar khazar
+RUN mkdir -p /var/lib/khazar/{models,bin} /run/khazar /etc/khazar/policies && \
+    chown -R khazar:khazar /var/lib/khazar /run/khazar /etc/khazar
+
+COPY khazar-share/bin/ai-orchestrator \
+     khazar-share/bin/ai-rule-engine \
+     khazar-share/bin/ai-policy-engine \
+     khazar-share/bin/ai-model-runtime \
+     khazar-share/bin/ai-intent-classifier \
+     khazar-share/bin/ai-desktop-agent \
+     khazar-share/bin/ai-package-agent \
+     khazar-share/bin/ai-network-agent \
+     khazar-share/bin/ai-power-agent \
+     khazar-share/bin/ai-audio-agent \
+     khazar-share/bin/kha \
+     /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/*
+
+COPY khazar-share/config/*.toml /etc/khazar/
+COPY khazar-share/config/policies/ /etc/khazar/policies/
+
+ENV KH_SOCK=/run/khazar/orchestrator.sock
+
+COPY khazar-share/start-khazar.sh /usr/local/bin/
+CMD ["/usr/local/bin/start-khazar.sh"]

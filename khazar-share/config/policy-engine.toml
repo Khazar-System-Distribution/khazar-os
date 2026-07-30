@@ -1,0 +1,6 @@
+# ── policy-engine.toml ───────────────────────────────
+socket_path="/run/khazar/policy-engine.sock"
+max_connections=64
+policy_dir="/etc/khazar/policies"
+log_level=3
+daemonize=false

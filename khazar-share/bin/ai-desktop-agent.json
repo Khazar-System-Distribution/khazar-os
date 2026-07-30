@@ -1,0 +1,14 @@
+{
+  "name": "ai-desktop-agent",
+  "display_name": "AI Desktop Agent",
+  "upstream": {
+    "homepage": "https://devuan.kg/khazar/ai-desktop-agent",
+    "bugs": "https://devuan.kg/khazar/ai-desktop-agent/issues"
+  },
+  "description": "Desktop agent for Khazar AI platform. Opens and closes applications.",
+  "dependencies": ["ai-sdk"],
+  "keywords": ["ai", "agent", "desktop", "khazar"],
+  "license": "GPL-3.0-only",
+  "homepage": "https://devuan.kg/khazar/ai-desktop-agent",
+  "source": "https://devuan.kg/khazar/ai-desktop-agent"
+}

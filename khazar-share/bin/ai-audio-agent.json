@@ -1,0 +1,14 @@
+{
+  "name": "ai-audio-agent",
+  "display_name": "AI Audio Agent",
+  "upstream": {
+    "homepage": "https://devuan.kg/khazar/ai-audio-agent",
+    "bugs": "https://devuan.kg/khazar/ai-audio-agent/issues"
+  },
+  "description": "Audio control agent for Khazar AI platform. Handles volume up/down/set, mute toggle, and audio status queries via pactl.",
+  "dependencies": ["ai-sdk"],
+  "keywords": ["ai", "agent", "audio", "volume", "pactl", "khazar"],
+  "license": "GPL-3.0-only",
+  "homepage": "https://devuan.kg/khazar/ai-audio-agent",
+  "source": "https://devuan.kg/khazar/ai-audio-agent"
+}

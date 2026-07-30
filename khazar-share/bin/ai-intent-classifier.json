@@ -1,0 +1,14 @@
+{
+  "name": "ai-intent-classifier",
+  "display_name": "AI Intent Classifier",
+  "upstream": {
+    "homepage": "https://devuan.kg/khazar/ai-intent-classifier",
+    "bugs": "https://devuan.kg/khazar/ai-intent-classifier/issues"
+  },
+  "description": "Tier 1 LLM-based intent classifier for Khazar AI platform. Handles queries the Rule Engine cannot resolve by sending them to ai-model-runtime for LLM inference and parsing classification results.",
+  "dependencies": ["ai-sdk", "ai-model-runtime"],
+  "keywords": ["ai", "intent", "classifier", "llm", "nlp", "khazar"],
+  "license": "GPL-3.0-only",
+  "homepage": "https://devuan.kg/khazar/ai-intent-classifier",
+  "source": "https://devuan.kg/khazar/ai-intent-classifier"
+}
