@@ -45,7 +45,9 @@ case "${1:-help}" in
         sudo systemctl restart khazar.target
         ;;
     install)
-        sudo bash "$(dirname "$0")/../distro/scripts/install.sh"
+        echo "KhazarOS is a bootc image. Reinstall with:"
+        echo "  sudo bootc commit"
+        echo "  sudo bootc switch khazaros:latest"
         ;;
     *)
         QUERY="$*"
