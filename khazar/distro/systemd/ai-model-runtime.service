@@ -4,11 +4,9 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/ai-model-runtime /etc/khazar/model-runtime.toml
+ExecStart=/var/lib/khazar/bin/ai-model-runtime /etc/khazar/model-runtime.toml
 Restart=always
 RestartSec=10
-RuntimeDirectory=khazar
-RuntimeDirectoryMode=0750
 User=khazar
 Group=khazar
 
