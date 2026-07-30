@@ -120,7 +120,7 @@ int protocol_build_response(const match_result_t *result, uint64_t id, char *buf
 
     return snprintf(buf, bufsz,
         "{\"id\":%lu,\"type\":\"response\",\"intent\":\"%s\",\"target\":\"%s\",\"action\":\"%s\",\"confidence\":%.2f,\"source\":\"%s\",\"matched\":\"%s\"}",
-        (unsigned long)id, intent_type_str(result->intent), result->target, result->action,
+        (unsigned long)id, intent_capability(result->intent), result->target, result->action,
         result->confidence,
         (result->source == MATCH_SOURCE_CACHE)  ? "cache"  :
         (result->source == MATCH_SOURCE_REGEX)  ? "regex"  :
@@ -137,7 +137,7 @@ int protocol_build_multi_response(const match_result_t *results, int count, uint
     for (int i = 0; i < count && pos < bufsz; i++) {
         pos += (size_t)snprintf(buf + pos, bufsz - pos,
             "%s{\"intent\":\"%s\",\"target\":\"%s\",\"action\":\"%s\",\"confidence\":%.2f,\"source\":\"%s\"}",
-            i > 0 ? "," : "", intent_type_str(results[i].intent), results[i].target,
+            i > 0 ? "," : "", intent_capability(results[i].intent), results[i].target,
             results[i].action, results[i].confidence,
             (results[i].source == MATCH_SOURCE_CACHE)  ? "cache"  :
             (results[i].source == MATCH_SOURCE_REGEX)  ? "regex"  :
