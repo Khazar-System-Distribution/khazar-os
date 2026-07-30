@@ -3,7 +3,7 @@
 
 set +e
 KH_SOCK="/run/khazar/orchestrator.sock"
-ORCH_SOCK="/tmp/ai-orch.sock"
+ORCH_SOCK="/run/khazar/orchestrator.sock"
 
 ln -sf "$KH_SOCK" "$ORCH_SOCK"
 
