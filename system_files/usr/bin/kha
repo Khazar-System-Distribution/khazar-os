@@ -2,7 +2,7 @@
 # kha — Khazar AI CLI
 # Usage: kha "firefox aç" | kha status | kha restart
 
-ORCH_SOCK="${KH_SOCK:-/run/khazar/ai-orchestrator.sock}"
+ORCH_SOCK="${KH_SOCK:-/run/khazar/orchestrator.sock}"
 
 send() {
     echo "$1" | socat - "UNIX-CONNECT:$ORCH_SOCK" 2>/dev/null
