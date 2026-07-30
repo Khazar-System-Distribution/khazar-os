@@ -16,7 +16,7 @@
 #define MODULE "audio-agent"
 #define AGENT_NAME "audio-agent"
 #define AGENT_VERSION "0.1.0"
-#define ORCH_SOCKET "/tmp/ai-orch.sock"
+#define ORCH_SOCKET "/run/khazar/orchestrator.sock"
 #define AGENT_SOCKET "/run/ai-audio-agent.sock"
 #define MAX_RESPONSE 65536
 
@@ -280,16 +280,20 @@ int main(void) {
         }
 
         time_t now = time(NULL);
-        if (now - last_heartbeat >= HEARTBEAT_INTERVAL_SEC && orch_fd >= 0) {
-            char beat[256];
-            snprintf(beat, sizeof(beat),
-                "{\"type\":\"heartbeat\",\"name\":\"%s\",\"timestamp\":%ld}",
-                AGENT_NAME, (long)now);
-            ssize_t w = write(orch_fd, beat, strlen(beat));
-            if (w < 0) {
-                close(orch_fd);
-                orch_fd = -1;
-                log_warn(MODULE, "heartbeat failed, reconnecting...");
+        if (now - last_heartbeat >= HEARTBEAT_INTERVAL_SEC) {
+            if (orch_fd >= 0) {
+                char beat[256];
+                snprintf(beat, sizeof(beat),
+                    "{\"type\":\"heartbeat\",\"name\":\"%s\",\"timestamp\":%ld}",
+                    AGENT_NAME, (long)now);
+                ssize_t w = write(orch_fd, beat, strlen(beat));
+                if (w < 0) {
+                    close(orch_fd);
+                    orch_fd = -1;
+                    log_warn(MODULE, "heartbeat failed, reconnecting...");
+                    register_with_orchestrator();
+                }
+            } else {
                 register_with_orchestrator();
             }
             last_heartbeat = now;
