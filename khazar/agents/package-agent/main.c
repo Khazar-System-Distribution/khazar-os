@@ -16,7 +16,7 @@
 #define MODULE "package-agent"
 #define AGENT_NAME "package-agent"
 #define AGENT_VERSION "0.1.0"
-#define ORCH_SOCKET "/tmp/ai-orch.sock"
+#define ORCH_SOCKET "/run/khazar/orchestrator.sock"
 #define AGENT_SOCKET "/run/ai-package-agent.sock"
 #define MAX_RESPONSE 65536
 
@@ -99,8 +99,16 @@ static int extract_str(const char *json, const char *key, char *buf, size_t bufs
 }
 
 static void detect_pkg_manager(void) {
-    if (access("/usr/bin/pacman", X_OK) == 0) {
+    if (access("/usr/bin/dnf5", X_OK) == 0) {
+        snprintf(pkg_manager, sizeof(pkg_manager), "dnf5");
+    } else if (access("/usr/bin/dnf", X_OK) == 0) {
+        snprintf(pkg_manager, sizeof(pkg_manager), "dnf");
+    } else if (access("/usr/bin/pacman", X_OK) == 0) {
         snprintf(pkg_manager, sizeof(pkg_manager), "pacman");
+    } else if (access("/usr/bin/apt-get", X_OK) == 0) {
+        snprintf(pkg_manager, sizeof(pkg_manager), "apt");
+    } else if (access("/usr/bin/rpm-ostree", X_OK) == 0) {
+        snprintf(pkg_manager, sizeof(pkg_manager), "rpm-ostree");
     }
 }
 
@@ -116,36 +124,50 @@ static int run_command(const char *cmd) {
     return status;
 }
 
+static const char *pkg_install_cmd(void) {
+    if (strcmp(pkg_manager, "dnf5") == 0) return "dnf5 install -y";
+    if (strcmp(pkg_manager, "dnf") == 0) return "dnf install -y";
+    if (strcmp(pkg_manager, "pacman") == 0) return "pacman -S --noconfirm";
+    if (strcmp(pkg_manager, "rpm-ostree") == 0) return "rpm-ostree install";
+    return "apt-get install -y";
+}
+static const char *pkg_remove_cmd(void) {
+    if (strcmp(pkg_manager, "dnf5") == 0) return "dnf5 remove -y";
+    if (strcmp(pkg_manager, "dnf") == 0) return "dnf remove -y";
+    if (strcmp(pkg_manager, "pacman") == 0) return "pacman -R --noconfirm";
+    if (strcmp(pkg_manager, "rpm-ostree") == 0) return "rpm-ostree uninstall";
+    return "apt-get remove -y";
+}
+static const char *pkg_search_cmd(void) {
+    if (strcmp(pkg_manager, "dnf5") == 0) return "dnf5 search";
+    if (strcmp(pkg_manager, "dnf") == 0) return "dnf search";
+    if (strcmp(pkg_manager, "pacman") == 0) return "pacman -Ss";
+    return "apt-cache search";
+}
+static const char *pkg_update_cmd(void) {
+    if (strcmp(pkg_manager, "dnf5") == 0) return "dnf5 update -y";
+    if (strcmp(pkg_manager, "dnf") == 0) return "dnf update -y";
+    if (strcmp(pkg_manager, "pacman") == 0) return "pacman -Syu --noconfirm";
+    if (strcmp(pkg_manager, "rpm-ostree") == 0) return "rpm-ostree upgrade";
+    return "apt-get update && apt-get upgrade -y";
+}
+
 static int execute_action(const char *action, const char *target) {
     char cmd[2048];
-
     if (strcmp(action, "install") == 0) {
         if (!target || !target[0]) return -1;
-        if (strcmp(pkg_manager, "pacman") == 0)
-            snprintf(cmd, sizeof(cmd), "pacman -S --noconfirm %s", target);
-        else
-            snprintf(cmd, sizeof(cmd), "apt-get install -y %s", target);
+        snprintf(cmd, sizeof(cmd), "%s %s", pkg_install_cmd(), target);
     } else if (strcmp(action, "remove") == 0) {
         if (!target || !target[0]) return -1;
-        if (strcmp(pkg_manager, "pacman") == 0)
-            snprintf(cmd, sizeof(cmd), "pacman -R --noconfirm %s", target);
-        else
-            snprintf(cmd, sizeof(cmd), "apt-get remove -y %s", target);
+        snprintf(cmd, sizeof(cmd), "%s %s", pkg_remove_cmd(), target);
     } else if (strcmp(action, "search") == 0) {
         if (!target || !target[0]) return -1;
-        if (strcmp(pkg_manager, "pacman") == 0)
-            snprintf(cmd, sizeof(cmd), "pacman -Ss %s", target);
-        else
-            snprintf(cmd, sizeof(cmd), "apt-cache search %s", target);
+        snprintf(cmd, sizeof(cmd), "%s %s", pkg_search_cmd(), target);
     } else if (strcmp(action, "update") == 0) {
-        if (strcmp(pkg_manager, "pacman") == 0)
-            snprintf(cmd, sizeof(cmd), "pacman -Syu --noconfirm");
-        else
-            snprintf(cmd, sizeof(cmd), "apt-get update && apt-get upgrade -y");
+        snprintf(cmd, sizeof(cmd), "%s", pkg_update_cmd());
     } else {
         return -1;
     }
-
     return run_command(cmd);
 }
 
@@ -345,16 +367,20 @@ int main(void) {
         }
 
         time_t now = time(NULL);
-        if (now - last_heartbeat >= HEARTBEAT_INTERVAL_SEC && orch_fd >= 0) {
-            char beat[256];
-            snprintf(beat, sizeof(beat),
-                "{\"type\":\"heartbeat\",\"name\":\"%s\",\"timestamp\":%ld}",
-                AGENT_NAME, (long)now);
-            ssize_t w = write(orch_fd, beat, strlen(beat));
-            if (w < 0) {
-                close(orch_fd);
-                orch_fd = -1;
-                log_warn(MODULE, "heartbeat failed, reconnecting...");
+        if (now - last_heartbeat >= HEARTBEAT_INTERVAL_SEC) {
+            if (orch_fd >= 0) {
+                char beat[256];
+                snprintf(beat, sizeof(beat),
+                    "{\"type\":\"heartbeat\",\"name\":\"%s\",\"timestamp\":%ld}",
+                    AGENT_NAME, (long)now);
+                ssize_t w = write(orch_fd, beat, strlen(beat));
+                if (w < 0) {
+                    close(orch_fd);
+                    orch_fd = -1;
+                    log_warn(MODULE, "heartbeat failed, reconnecting...");
+                    register_with_orchestrator();
+                }
+            } else {
                 register_with_orchestrator();
             }
             last_heartbeat = now;
